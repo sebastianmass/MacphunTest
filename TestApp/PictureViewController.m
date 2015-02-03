@@ -68,6 +68,8 @@
         [self.mainScrollView addSubview:imgView];
         [imgView setImage:self.currentPhoto];
     }
+    
+    [self applyFilterWithName:self.filterNamesArray[0] toImageView:(UIImageView *)[self.mainScrollView viewWithTag:1]];
 }
 
 #pragma mark - UIScrollViewDelegate
