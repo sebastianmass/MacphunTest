@@ -64,7 +64,7 @@
     for (int i = 0; i < [self.filterNamesArray count]; i++)
     {
         UIImageView *imgView = [[UIImageView alloc] initWithFrame:CGRectMake(self.view.bounds.size.width *i, 0, self.view.bounds.size.width, self.view.bounds.size.height)];
-        imgView.tag = i;
+        imgView.tag = (i + 1);
         [self.mainScrollView addSubview:imgView];
         [imgView setImage:self.currentPhoto];
     }
@@ -80,7 +80,7 @@
         
         self.currentPage = selectedPage;
         
-        [self applyFilterWithName:self.filterNamesArray[self.currentPage] toImageView:(UIImageView *)[self.mainScrollView viewWithTag:self.currentPage]];
+        [self applyFilterWithName:self.filterNamesArray[self.currentPage] toImageView:(UIImageView *)[self.mainScrollView viewWithTag:(self.currentPage + 1)]];
     }
 
 }
@@ -93,11 +93,17 @@
         
         CIImage *beginImage = [CIImage imageWithCGImage:self.currentPhoto.CGImage];
         
+        CIContext *context = [CIContext contextWithOptions:nil];
+        
         CIFilter *filter = [CIFilter filterWithName:filterName keysAndValues:kCIInputImageKey, beginImage, nil];
         
         CIImage *outputImage = [filter outputImage];
         
-        UIImage *newImage = [UIImage imageWithCIImage:outputImage];
+        CGImageRef cgimg = [context createCGImage:outputImage fromRect:[outputImage extent]];
+
+        UIImage *newImage = [UIImage imageWithCGImage:cgimg];
+        
+        CGImageRelease(cgimg);
         
         dispatch_async(dispatch_get_main_queue(), ^{
             imageView.image = newImage;
